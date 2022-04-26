@@ -29,7 +29,7 @@ impl Todo {
     pub fn insert(&mut self, key: String) {
         // insert a new item into our map.
         // we pass true as value.
-        self.map.insert(key, "☐".to_string());
+        self.map.insert(key.trim().to_string(), "☐".to_string());
     }
 
     pub fn save(self, filename: &str) -> Result<(), std::io::Error> {
@@ -44,7 +44,7 @@ impl Todo {
     }
 
     pub fn complete(&mut self, key: &String) -> Option<()> {
-        match self.map.get_mut(key) {
+        match self.map.get_mut(key.trim()) {
             Some(v) => Some(*v = "✅".to_string()),
             None => None,
         }
