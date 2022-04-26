@@ -1,5 +1,6 @@
 use std::process;
 use std::fs;
+use std::io;
 use std::collections::HashMap;
 pub struct Todo {
     // use rust built in HashMap to store key - val pairs
@@ -49,49 +50,34 @@ impl Todo {
             None => None,
         }
     }
+    pub fn display(self,filename: &str) {
+        let contents = fs::read_to_string(filename).expect("File Not exist");
+         for _line in contents.lines() {
+                println!("{}",_line);
+         }
+    }
 }
 
-pub fn check (password: &str, i: &str) {
-    let contents = fs::read_to_string("password.txt").expect("file to open user");
-    let mut f=0;
-    let mut count=1; 
-    for line in contents.lines() {
-        if i.trim() == count.to_string().trim() {
-        if line.contains(&password) {
-            f=1;
-        }
-        
-        }
-        count=count+1;
-    }
-    if f ==0 {
-        println!("Invalid Password");
-        process::exit(1);
-    }
-
-}
 pub fn reset() {
-    
-    let mut _password = vec!["0000", "0000", "0000", "0000"];
-    let mut _usernames = vec!["Admin1"];
-    let mut pass = String::new();
-    pass.push_str(_password[0]);
-             pass.push_str("\n");
-             pass.push_str(_password[1]);
-             pass.push_str("\n");
-             pass.push_str(_password[2]);
-             pass.push_str("\n");
-             pass.push_str(_password[3]);
-    std::fs::write("password.txt",pass).expect("Unable to write file");
-
-
-    let mut user = String::new();
-         user.push_str(_usernames[0]);
-         std::fs::write("db.txt",user).expect("Unable to write file");
-
+    let _x= fs::remove_file("data.txt");
     let _x = fs::remove_file("user1.json");
     let _x =fs::remove_file("user2.json");
     let _x =fs::remove_file("user3.json");
     let _x =fs::remove_file("user4.json");
-    let _x =println!("Rest Completed");
+    println!("Rest Completed");
+}
+pub fn welcome() -> String{
+
+    println!("Welcome To To-do list");
+    println!("(Press 1)\tNew User");
+    println!("(Press 2)\tExisting User");
+    
+    let mut option = String::new();
+         io::stdin().read_line(&mut option).expect("Invalid Option");
+    let trimmed = option.trim();
+    if !(trimmed =="1" || trimmed == "2") {
+        println!("Invalid Option");
+        process::exit(1);
+    }
+    return trimmed.to_string();
 }
