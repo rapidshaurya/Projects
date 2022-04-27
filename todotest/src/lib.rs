@@ -4,18 +4,18 @@ use std::io;
 use std::collections::HashMap;
 pub struct Todo {
     // use rust built in HashMap to store key - val pairs
-    pub map: HashMap<String, String>,
+    pub map: HashMap<String, HashMap<String, String>>,   //change
 }
 
 impl Todo {
     
-    pub fn new(filename: &str) -> Result<Todo, std::io::Error> {
+    pub fn new() -> Result<Todo, std::io::Error> {
         // open db.json
     let f = std::fs::OpenOptions::new()
         .write(true)
         .create(true)
         .read(true)
-        .open(filename)?;
+        .open("user1.json")?;
     // serialize json as HashMap
     
     match serde_json::from_reader(f) {
@@ -27,43 +27,65 @@ impl Todo {
     }
     }
 
-    pub fn insert(&mut self, key: String) {
+    pub fn insert(&mut self,username:String, key: String) {
         // insert a new item into our map.
         // we pass true as value.
-        self.map.insert(key.trim().to_string(), "☐".to_string());
+        let mut map = HashMap::new();
+        for (key1, val1) in self.map.iter() {
+            if key1.to_string() == username.trim() {
+                for (key2, val2) in val1.iter() {
+                    map.insert(key2.to_string(), val2.to_string());
+                }
+                map.insert(key.trim().to_string(), "☐".to_string());
+            }
+        }
+        map.insert(key.trim().to_string(), "☐".to_string());
+        self.map.insert(username.trim().to_string(), map );  
     }
 
-    pub fn save(self, filename: &str) -> Result<(), std::io::Error> {
+    pub fn save(self) -> Result<(), std::io::Error> {
         // open file
     let f = std::fs::OpenOptions::new()
         .write(true)
         .create(true)
-        .open(filename)?;
+        .open("user1.json")?;
     // write to file with serde
     serde_json::to_writer_pretty(f, &self.map)?;
     Ok(())
     }
 
-    pub fn complete(&mut self, key: &String) -> Option<()> {
-        match self.map.get_mut(key.trim()) {
-            Some(v) => Some(*v = "✅".to_string()),
+    pub fn complete(&mut self, username:String, key: &String) -> Option<()> {
+        let mut map = HashMap::new();
+        for (key1, val1) in self.map.iter() {
+            if key1.to_string() == username.trim() {
+                for (key2, val2) in val1.iter() {
+                    map.insert(key2.to_string(), val2.to_string());
+                }
+                map.insert(key.trim().to_string(), "✅".to_string());
+                return match map.get_mut(username.trim()) {
+                    Some(v) => Some(*v = "✅".to_string()),
+                    None => None,
+                }
+            }
+        }
+   
+        return match self.map.get_mut(username.trim()) {
+            Some(v) => Some(*v = map),
             None => None,
         }
     }
-    pub fn display(self,filename: &str) {
-        let contents = fs::read_to_string(filename).expect("File Not exist");
-         for _line in contents.lines() {
-                println!("{}",_line);
-         }
+    pub fn display(self,username: String) {
+        for (key1, val1) in self.map.iter() {
+            if key1.to_string() == username.trim() {
+                println!("{:#?}", val1);
+            }
+        }
     }
 }
 
 pub fn reset() {
     let _x= fs::remove_file("data.txt");
     let _x = fs::remove_file("user1.json");
-    let _x =fs::remove_file("user2.json");
-    let _x =fs::remove_file("user3.json");
-    let _x =fs::remove_file("user4.json");
     println!("Rest Completed");
 }
 pub fn welcome() -> String{

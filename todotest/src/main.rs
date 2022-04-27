@@ -9,7 +9,6 @@ use std::io;
 
 fn main() {
     let trimmed = welcome();
-    let mut _fileno = 0;
     if trimmed.trim() == "1" {
          let mut logres = Login::new().expect("Failed to create new user");
         println!("Enter New Username");
@@ -52,22 +51,9 @@ fn main() {
         println!("Invalid Password");
         process::exit(1);
                  }
-        _fileno=count;
-    let mut filename="";
-    if _fileno == 1 {
-        filename="user1.json";
-    }
-    else if _fileno == 2 {
-        filename="user2.json";
-    }else if _fileno == 3 {
-        filename="user3.json";
-    }
-    else if _fileno == 4 {
-        filename="user4.json";
-    }
 
 
-    println!("Enter Action  [add, display, remove, complete]");
+    println!("Enter Action  [add, display, complete]");
     let mut action = String::new();
          io::stdin().read_line(&mut action).expect("Please specify an action");
          let action = action.trim();
@@ -77,31 +63,29 @@ fn main() {
          println!("Enter Item");
          io::stdin().read_line(&mut item).expect("Please specify an item");
     }
-    let mut todo = Todo::new(&filename).expect("Initialisation of db failed");
-    
+    let mut todo = Todo::new().expect("Initialisation of db failed");
     if action == "add" {
-        todo.insert(item);
-        match todo.save(&filename) {
+        todo.insert(username,item);
+        match todo.save() {
             Ok(_) => println!("File Saved...."),
             Err(why) => println!("An error occurred: {}", why),
         }
     } else if action == "complete" {
-        match todo.complete(&item) {
+        match todo.complete(username,&item) {
             None => println!("'{}' is not present in the list", item),
-            Some(_) => match todo.save(&filename) {
+            Some(_) => match todo.save() {
                 Ok(_) => println!("File Saved...."),
                 Err(why) => println!("An error occurred: {}", why),
             },
         }
-    } else if action == "remove" {
-        fs::remove_file(&filename)
-      .expect("File delete failed");
-       println!("File deleted successfully!");
-    }
-      else if action == "display" {
-          todo.display(&filename);
+    } else if action == "display" {
+          todo.display(username);
       }
-    println!("[Press 1]\tReset to-do list for all user\n[Press exit]\tExit");
+      else {
+          println!("Invalid  Option!!");
+          process::exit(1);
+      }
+    println!("[Press 1]\tReset to-do list for all user\n[Press Enter]\tExit");
     let mut res = String::new();
          io::stdin().read_line(&mut res).expect("Please specify an item");
     if res.trim() == "1" {

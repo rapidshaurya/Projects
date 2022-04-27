@@ -29,10 +29,6 @@ impl Login {
                     process::exit(1);
                 }
          }
-         if key >4 {
-             println!("User Limit Exceeded");
-             process::exit(0);
-         }
          let insert = format!("{}\t{}", username.trim(), password.trim());
          if key>1{
             contents.push_str("\n");
