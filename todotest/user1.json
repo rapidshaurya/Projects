@@ -1,9 +1,11 @@
 {
-  "b": {
-    "motu": "☐"
-  },
   "a": {
-    "happy": "☐",
-    "motu": "☐"
+    "watch movie": "☐",
+    "motu": "✅",
+    "tv shows": "☐",
+    "happy": "☐"
+  },
+  "b": {
+    "motu": "✅"
   }
 }

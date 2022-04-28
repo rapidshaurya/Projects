@@ -56,22 +56,25 @@ impl Todo {
 
     pub fn complete(&mut self, username:String, key: &String) -> Option<()> {
         let mut map = HashMap::new();
+        let mut f = false;
+        let s = Some(());
         for (key1, val1) in self.map.iter() {
             if key1.to_string() == username.trim() {
                 for (key2, val2) in val1.iter() {
                     map.insert(key2.to_string(), val2.to_string());
-                }
-                map.insert(key.trim().to_string(), "✅".to_string());
-                return match map.get_mut(username.trim()) {
-                    Some(v) => Some(*v = "✅".to_string()),
-                    None => None,
-                }
+                    if key.trim().to_string() == key2.to_string() {
+                        map.insert(key.trim().to_string(), "✅".to_string());
+                        f = true;
+                    }
+                }   
             }
         }
-   
-        return match self.map.get_mut(username.trim()) {
-            Some(v) => Some(*v = map),
-            None => None,
+        if f == true{
+        self.map.insert(username.trim().to_string(), map);
+        }
+        return match f {
+            true => s,
+            false => None,
         }
     }
     pub fn display(self,username: String) {
